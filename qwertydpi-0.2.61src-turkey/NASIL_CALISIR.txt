@@ -1,0 +1,219 @@
+
+╔══════════════════════════════════════════════════════════════════╗
+║           qwertydpi v0.2.61 - Turkey                             ║
+║      Turkiye DPI Engellerini Atlama Araci                        ║
+║      Web sitesi + Oyun | Arka Plan Servisi                       ║
+╚══════════════════════════════════════════════════════════════════╝
+
+=====================================================================
+  HIZLI BASLANGIC (once bunu dene)
+=====================================================================
+
+1. service_install_qwertydpi.cmd dosyasina
+   SAG TIKLA → "Yonetici Olarak Calistir"
+
+2. Herhangi bir tusa basin
+
+3. Tamam! Servis arka planda calisiyor.
+   Pencere kapanabilir, servis DURMAZ.
+   Windows her acildiginda otomatik baslar.
+
+Calismadiysa asagidaki alternatif modlara bak.
+
+
+=====================================================================
+  DOSYA YAPISI
+=====================================================================
+
+service_install_qwertydpi.cmd             <- ANA MOD (once bunu dene)
+service_install_qwertydpi_alternative.cmd <- Alternatif 1
+service_install_qwertydpi_alternative2.cmd
+service_install_qwertydpi_alternative3.cmd
+service_install_qwertydpi_alternative4.cmd
+service_install_qwertydpi_alternative5.cmd
+service_remove.cmd                        <- SERVISI KALDIR
+qwertydpi.cmd                             <- Direkt calistir (pencere)
+qwertydpi_alternative.cmd                 <- Direkt calistir (alt)
+x86_64\goodbyedpi.exe                     <- Ana program (v0.2.2)
+
+
+=====================================================================
+  MODLAR VE PARAMETRELER
+=====================================================================
+
+ANA MOD (service_install_qwertydpi.cmd)
+  Parametreler: -5 --set-ttl 5 --dns-addr 77.88.8.8 --dns-port 1253
+                --dnsv6-addr 2a02:6b8::feed:0ff --dnsv6-port 1253
+  ISP          : Turk Telekom, Turkcell, Vodafone
+  Ne yapar     : Preset -5 (modern fragmantasyon + ters siralama +
+                 auto-TTL) + sahte paket TTL=5 + Yandex DNS 1253
+  Her ikisi    : Web sitesi VE oyun icin calisir
+  DNS          : Otomatik (Yandex, port 1253 ile ISP DNS atlaniyor)
+
+  ─────────────────────────────────────────────────────────────────
+
+ALTERNATIF 1 (service_install_qwertydpi_alternative.cmd)
+  Parametreler: --set-ttl 3
+  ISP          : SuperOnline, bazi Turkcell
+  Ne yapar     : Sadece TTL manipulasyonu, DNS yonlendirme YOK
+  Gereklilik   : Ag ayarlarindan DNS elle degistirin:
+                 8.8.8.8 (Google) veya 1.1.1.1 (Cloudflare)
+  Ne zaman     : Ana mod calismiyorsa ilk deneyecegimiz alternatif
+
+  ─────────────────────────────────────────────────────────────────
+
+ALTERNATIF 2 (service_install_qwertydpi_alternative2.cmd)
+  Parametreler: -5
+  Ne yapar     : Sadece DPI bypass, DNS yonlendirme YOK
+  Gereklilik   : Ag ayarlarindan DNS elle degistirin
+  Ne zaman     : ISP DNS manipulasyonu yapmiyorsa, sadece DPI engeli var
+
+  ─────────────────────────────────────────────────────────────────
+
+ALTERNATIF 3 (service_install_qwertydpi_alternative3.cmd)
+  Parametreler: --set-ttl 3 --dns-addr 77.88.8.8 --dns-port 1253
+                --dnsv6-addr 2a02:6b8::feed:0ff --dnsv6-port 1253
+  Ne yapar     : TTL manipulasyonu + Yandex DNS yonlendirme
+  Ne zaman     : Alt-1 calisiyorsa ama DNS de problem yapiyorsa
+
+  ─────────────────────────────────────────────────────────────────
+
+ALTERNATIF 4 (service_install_qwertydpi_alternative4.cmd)
+  Parametreler: -5 --dns-addr 77.88.8.8 --dns-port 1253
+                --dnsv6-addr 2a02:6b8::feed:0ff --dnsv6-port 1253
+  Ne yapar     : Preset -5 + Yandex DNS, ek TTL yok
+  Ne zaman     : Ana mod calismiyor, --set-ttl bazi siteleri bozuyorsa
+
+  ─────────────────────────────────────────────────────────────────
+
+ALTERNATIF 5 (service_install_qwertydpi_alternative5.cmd)
+  Parametreler: -6 --dns-addr 77.88.8.8 --dns-port 1253
+                --dnsv6-addr 2a02:6b8::feed:0ff --dnsv6-port 1253
+  Ne yapar     : Preset -6 (wrong-seq yontemi) + Yandex DNS
+                 Preset -5'ten farkli sahte paket tekniği kullanir
+  Ne zaman     : Hicbir mod calismiyorsa, son deneme
+
+
+=====================================================================
+  HANGI MODU DENEYECEGIM?
+=====================================================================
+
+Adim adim dene, calisan ilkinde dur:
+
+  1. service_install_qwertydpi.cmd (Ana Mod)
+     Calismadiysa →
+
+  2. service_install_qwertydpi_alternative.cmd
+     DNS'i elle degistir: 8.8.8.8
+     Calismadiysa →
+
+  3. service_install_qwertydpi_alternative3.cmd
+     Calismadiysa →
+
+  4. service_install_qwertydpi_alternative4.cmd
+     Calismadiysa →
+
+  5. service_install_qwertydpi_alternative5.cmd
+
+Her yeni modu denemeden once service_remove.cmd ile eskisini kaldir.
+
+
+=====================================================================
+  SERVIS NASIL CALISIR?
+=====================================================================
+
+qwertydpi, Windows Hizmet Yoneticisini (sc.exe) kullanarak
+goodbyedpi.exe'yi bir Windows servisi olarak kaydeder:
+
+  sc create "GoodbyeDPI" binPath= "...\goodbyedpi.exe [parametreler]"
+                          start= "auto"
+
+Bu sayede:
+  ✓ Arka planda calisir, hic pencere acilmaz
+  ✓ Windows her acildiginda otomatik baslar
+  ✓ Kullanici girisi beklenmez, sistem baslangicinda aktif
+  ✓ services.msc'de "GoodbyeDPI" olarak gorulur
+
+Servisi kontrol:
+  → Windows + R → services.msc → "GoodbyeDPI" ara
+  → Veya: sc query GoodbyeDPI
+
+
+=====================================================================
+  DIREKT CALISTIRMA DOSYALARI
+=====================================================================
+
+qwertydpi.cmd ve qwertydpi_alternative.cmd
+  → Servis KURMAZ, sadece o an calistirir
+  → Pencere acilir ama hemen kapanir (goodbyedpi.exe arkaplanda devam eder)
+  → Bilgisayar kapaninca durur, tekrar baslangica gelince calismaz
+  → Sadece test amaciyla kullanin
+
+Kalici ve otomatik baslangic icin SERVICE dosyalarini kullanin.
+
+
+=====================================================================
+  OYUNLAR
+=====================================================================
+
+Ayri bir "oyun modu" yoktur. Ana mod her ikisi icin de calisir:
+
+  - Web sitesi engeli: TLS fragmantasyon + auto-TTL engeli kaldirir
+  - Oyun engeli    : Ayni TLS mekanizmasiyla oyun giris sunucularini
+                     da bypass eder
+
+Steam, Riot Games (Valorant, LoL), Epic Games, EA, PUBG gibi
+oyunlarda ana mod veya alternatif 1/3 denenebilir.
+Servisi kurduktan sonra oyunu/platformu yeniden baslatin.
+
+
+=====================================================================
+  SORUN GIDERME
+=====================================================================
+
+"Erisim Engellendi" veya "sc" komutu calismadi:
+  → Mutlaka SAG TIKLA → "Yonetici Olarak Calistir"
+  → Windows Defender goodbyedpi.exe'yi engelliyor olabilir:
+    Guvenlik > Virus Korumasi > Istisnalar > x86_64\goodbyedpi.exe
+
+Site hala acilmiyor:
+  → Tarayiciyi kapat ve yeniden ac (DNS onbellegini temizler)
+  → Diger alternatif modlari dene
+  → Ag ayarlarindan DNS'i 8.8.8.8 yap, sonra Alternatif 1 veya 2'yi dene
+
+Oyun hala baglanmiyor:
+  → Servisi yeniden kur (service_remove.cmd sonra service_install)
+  → Oyun istemcisini tamamen kapat, servis kurulduktan sonra ac
+  → Alternatif 1'i (SuperOnline modu) dene
+
+Servisi tamamen kaldirmak:
+  → service_remove.cmd → Yonetici olarak calistir
+
+Servisi manuel kontrol (cmd olarak):
+  → sc query GoodbyeDPI    (durum)
+  → sc start GoodbyeDPI    (baslat)
+  → sc stop GoodbyeDPI     (durdur)
+  → sc delete GoodbyeDPI   (kaldir)
+
+
+=====================================================================
+  PRESET ACIKLAMALARI (v0.2.2)
+=====================================================================
+
+  -1   -p -r -s -f 2 -k 2 -n -e 2          (en uyumlu, eski yontem)
+  -2   -p -r -s -f 2 -k 2 -n -e 40         (HTTPS icin daha hizli)
+  -3   -p -r -s -e 40                       (HTTP+HTTPS hizli)
+  -4   -p -r -s                             (en hizli, en az bypass)
+  -5   -f 2 -e 2 --auto-ttl --reverse-frag  (modern, onerilir)
+       --max-payload
+  -6   -f 2 -e 2 --wrong-seq --reverse-frag (modern, farkli sahte paket)
+       --max-payload
+
+  --set-ttl <n>    Sahte paket gonder, TTL=n (DPI'yi kandiran paket)
+  --dns-addr <ip>  DNS sorgularini bu IP'ye yonlendir
+  --dns-port <port>DNS yonlendirme portu (1253 = Yandex bypass portu)
+
+
+=====================================================================
+  qwertydpi v0.2.61 Turkey | GoodbyeDPI v0.2.2 tabanli
+=====================================================================
